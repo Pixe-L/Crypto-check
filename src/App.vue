@@ -1,7 +1,8 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import Footer from "./components/Footer.vue";
+import { ref, onMounted, reactive } from "vue";
 
-const monedas = ref([
+const currency = ref([
   { codigo: "USD", texto: "Dolar de Estados Unidos" },
   { codigo: "MXN", texto: "Peso Mexicano" },
   { codigo: "EUR", texto: "Euro" },
@@ -9,6 +10,10 @@ const monedas = ref([
 ]);
 
 const cryptos = ref([]);
+const quote = reactive({
+  currency: "",
+  crypto: "",
+});
 
 onMounted(() => {
   const URL =
@@ -19,6 +24,14 @@ onMounted(() => {
       cryptos.value = LIST;
     });
 });
+
+const quoteCrypto = () => {
+  if (quote.currency === "" || quote.crypto === "") {
+    alert("Please select a currency and a crypto");
+    return;
+  }
+  console.log(quote);
+};
 </script>
 
 <template>
@@ -27,15 +40,15 @@ onMounted(() => {
   </div>
 
   <div class="content">
-    <form class="form">
+    <form @submit.prevent="quoteCrypto" class="form">
       <div class="field">
         <label for="currency">Currency:</label>
-        <select name="currency">
+        <select v-model="quote.currency" name="currency">
           <option value="">--Select--</option>
           <option
-            :value="moneda.codigo"
-            v-for="moneda in monedas"
+            v-for="moneda in currency"
             :key="moneda.codigo"
+            :value="moneda.codigo"
           >
             {{ moneda.texto }}
           </option>
@@ -44,7 +57,7 @@ onMounted(() => {
 
       <div class="field">
         <label for="crypto">Crypto:</label>
-        <select name="crypto">
+        <select v-model="quote.crypto" name="crypto">
           <option value="">--Select--</option>
           <option
             v-for="crypto in cryptos"
@@ -59,6 +72,8 @@ onMounted(() => {
       <input class="btnSub" type="submit" value="Quote" />
     </form>
   </div>
+
+  <Footer class="footer" />
 </template>
 
 <style scoped></style>
