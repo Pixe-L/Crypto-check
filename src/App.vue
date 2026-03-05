@@ -1,5 +1,6 @@
 <script setup>
 import Footer from "./components/Footer.vue";
+import Alert from "./components/Alert.vue";
 import { ref, onMounted, reactive } from "vue";
 
 const currency = ref([
@@ -10,6 +11,7 @@ const currency = ref([
 ]);
 
 const cryptos = ref([]);
+const error = ref("");
 const quote = reactive({
   currency: "",
   crypto: "",
@@ -26,11 +28,12 @@ onMounted(() => {
 });
 
 const quoteCrypto = () => {
-  if (quote.currency === "" || quote.crypto === "") {
-    alert("Please select a currency and a crypto");
+  if (Object.values(quote).includes("")) {
+    error.value = "Todos los campos son obligatorios.";
     return;
   }
-  console.log(quote);
+  error.value = "";
+  console.log("Quote...");
 };
 </script>
 
@@ -40,6 +43,7 @@ const quoteCrypto = () => {
   </div>
 
   <div class="content">
+    <Alert v-if="error">{{ error }}</Alert>
     <form @submit.prevent="quoteCrypto" class="form">
       <div class="field">
         <label for="currency">Currency:</label>
