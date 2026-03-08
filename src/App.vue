@@ -30,6 +30,7 @@ onMounted(() => {
     .then(({ Data: { LIST } }) => {
       cryptos.value = LIST;
     });
+  quote.language = language.value[1].codigo;
 });
 
 const quoteCrypto = () => {
@@ -86,13 +87,12 @@ const quoteCrypto = () => {
       <div class="field">
         <label for="language">Language:</label>
         <select v-model="quote.language" name="language">
-          <option value="">--Select--</option>
           <option
-            v-for="language in language"
-            :value="language.codigo"
-            :key="language.codigo"
+            v-for="languages in language"
+            :value="languages.codigo"
+            :key="languages.codigo"
           >
-            {{ language.texto }}
+            {{ languages.texto }}
           </option>
         </select>
       </div>
