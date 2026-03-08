@@ -9,17 +9,22 @@ const currency = ref([
   { codigo: "EUR", texto: "Euro" },
   { codigo: "GBP", texto: "Libra Esterlina" },
 ]);
+const language = ref([
+  { codigo: "es-ES", texto: "Spanish" },
+  { codigo: "en-US", texto: "English" },
+]);
 
 const cryptos = ref([]);
 const error = ref("");
 const quote = reactive({
   currency: "",
   crypto: "",
+  language: "",
 });
 
 onMounted(() => {
   const URL =
-    "https://data-api.coindesk.com/asset/v1/top/list?page=1&page_size=20&sort_by=CIRCULATING_MKT_CAP_USD&sort_direction=DESC&groups=ID,BASIC,SUPPLY,PRICE,MKT_CAP,VOLUME,CHANGE,TOPLIST_RANK&toplist_quote_asset=USD";
+    "https://data-api.coindesk.com/asset/v1/top/list?page=1&page_size=10&sort_by=CIRCULATING_MKT_CAP_USD&sort_direction=DESC&groups=ID,BASIC,TOPLIST_RANK&toplist_quote_asset=USD";
   fetch(URL)
     .then((response) => response.json())
     .then(({ Data: { LIST } }) => {
@@ -33,7 +38,12 @@ const quoteCrypto = () => {
     return;
   }
   error.value = "";
-  console.log("Quote...");
+  const URL = `https://data-api.coindesk.com/asset/v2/metadata?assets=${quote.crypto}&asset_lookup_priority=SYMBOL&quote_asset=${quote.currency}&asset_language=${quote.language}&groups=ID,BASIC,PRICE,TOPLIST_RANK,VOLUME`;
+  fetch(URL)
+    .then((response) => response.json())
+    .then(({ Data }) => {
+      console.log(Data);
+    });
 };
 </script>
 
@@ -69,6 +79,20 @@ const quoteCrypto = () => {
             :key="crypto.ID"
           >
             {{ crypto.NAME }}
+          </option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="language">Language:</label>
+        <select v-model="quote.language" name="language">
+          <option value="">--Select--</option>
+          <option
+            v-for="language in language"
+            :value="language.codigo"
+            :key="language.codigo"
+          >
+            {{ language.texto }}
           </option>
         </select>
       </div>
